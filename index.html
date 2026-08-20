@@ -104,16 +104,21 @@
       gap: 8px;
     }
 
-    .chat-footer input {
+    .chat-footer textarea {
       flex: 1;
       padding: 10px 14px;
       border: 1px solid #ccc;
       border-radius: 20px;
       outline: none;
       font-size: 14px;
+      font-family: inherit;
+      resize: none;
+      overflow-y: auto;
+      line-height: 1.4;
+      max-height: 120px;
     }
 
-    .chat-footer input:focus {
+    .chat-footer textarea:focus {
       border-color: #0084ff;
     }
 
@@ -150,7 +155,7 @@
     </div>
 
     <div class="chat-footer">
-      <input type="text" id="chat-input" placeholder="Ketik pesan..." />
+      <textarea id="chat-input" rows="1" placeholder="Ketik pesan... (Shift+Enter untuk baris baru)"></textarea>
       <button type="button" id="send-btn">Kirim</button>
     </div>
   </div>
@@ -209,10 +214,21 @@
       chatBody.scrollTop = chatBody.scrollHeight;
     }
 
-    sendBtn.addEventListener('click', sendMessage);
-    chatInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') sendMessage();
+    // Enter = kirim, Shift+Enter = baris baru (spasi bawah)
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
     });
+
+    // Auto-resize textarea agar bisa memuat beberapa baris
+    chatInput.addEventListener('input', () => {
+      chatInput.style.height = 'auto';
+      chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
+    });
+
+    sendBtn.addEventListener('click', sendMessage);
   </script>
 
 </body>
